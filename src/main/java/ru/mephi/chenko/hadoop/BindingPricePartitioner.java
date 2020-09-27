@@ -16,7 +16,7 @@ public class BindingPricePartitioner implements Partitioner<Text, IntWritable> {
      */
     @Override
     public int getPartition(Text key, IntWritable value, int numReduceTasks) {
-        return key.hashCode() % numReduceTasks;
+        return(key.hashCode() & Integer.MAX_VALUE) % numReduceTasks;
     }
 
     /**

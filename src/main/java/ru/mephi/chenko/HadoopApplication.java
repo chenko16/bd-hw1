@@ -10,6 +10,8 @@ import ru.mephi.chenko.hadoop.BindingPriceMapper;
 import ru.mephi.chenko.hadoop.BindingPriceReducer;
 
 import java.net.URI;
+import java.time.Duration;
+import java.time.Instant;
 
 public class HadoopApplication {
 
@@ -18,6 +20,7 @@ public class HadoopApplication {
     public static void main(String[] args) throws Exception {
         if(args.length < 2) {
             System.out.println("Usage: hadoopApp inputFilesDirectory resultDirectory [cacheFilePath]");
+            return;
         }
 
         JobConf conf = new JobConf(HadoopApplication.class);
@@ -31,7 +34,7 @@ public class HadoopApplication {
 
         // Если в аргументах есть файл для кэширования, то добавляем его в распределенных кэш
         if(args.length > 2) {
-            DistributedCache.addCacheFile(new URI(args[2]), conf);
+            DistributedCache.addCacheFile(new URI(args[2] + "#city"), conf);
         }
 
         // Указываем путь до входных и выходных данных
@@ -48,9 +51,9 @@ public class HadoopApplication {
         // Устанавливаем количество Reducer
         conf.setNumReduceTasks(REDUCER_COUNT);
 
-        long startJobTime = System.nanoTime();
+        Instant startJobTime = Instant.now();
         JobClient.runJob(conf);
-        long finishJobTime = System.nanoTime();
-        System.out.println("LOG [INFO] Execution time: " + (finishJobTime - startJobTime) + " ms");
+        Instant finishJobTime = Instant.now();
+        System.out.println("LOG [INFO] Execution time: " + Duration.between(startJobTime, finishJobTime).toMillis() + " ms");
     }
 }
