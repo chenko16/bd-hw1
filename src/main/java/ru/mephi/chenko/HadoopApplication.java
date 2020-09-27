@@ -42,7 +42,7 @@ public class HadoopApplication {
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
         // Устанавливаем формат файла результата
-//        conf.setOutputFormat(SequenceFileOutputFormat.class);
+        conf.setOutputFormat(SequenceFileOutputFormat.class);
 
         // Указываем формат ключа и значения результата
         conf.setOutputKeyClass(Text.class);
