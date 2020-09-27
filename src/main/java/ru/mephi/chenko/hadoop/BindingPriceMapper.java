@@ -31,8 +31,11 @@ public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWrit
             String[] inputData = value.toString().split("\\t");
             String city = inputData[7];
             String cachedCityName = cityMapCache.get(city);
-            city = cachedCityName == null ? city : cachedCityName;
+            if(cachedCityName != null) { // Если в кэше есть id города, то заменяем на название города
+                city = cachedCityName;
+            }
 
+            // Фильтруем записи по значению поля bindingPrice
             if(Integer.parseInt(inputData[19]) > MIN_BID_PRICE) {
                 output.collect(new Text(city), ONE);
             }
@@ -50,7 +53,7 @@ public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWrit
         try {
             URI[] cacheFilesUris = DistributedCache.getCacheFiles(conf);
 
-            if(cacheFilesUris != null) {
+            if(cacheFilesUris != null) { //Для каждоо файла в кэше считываем его и добавляем в мапу соотвествия id и названия городов
                 for (URI fileURI : cacheFilesUris) {
                     BufferedReader brReader = new BufferedReader(new FileReader(fileURI.toString()));
                     String strLineRead = "";
