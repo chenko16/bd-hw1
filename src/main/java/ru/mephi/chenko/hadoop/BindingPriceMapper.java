@@ -1,6 +1,5 @@
 package ru.mephi.chenko.hadoop;
 
-import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -8,7 +7,6 @@ import org.apache.hadoop.mapred.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,17 +49,11 @@ public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWrit
     @Override
     public void configure(JobConf conf) {
         try {
-            URI[] cacheFilesUris = DistributedCache.getCacheFiles(conf);
-
-            if(cacheFilesUris != null) { //Для каждоо файла в кэше считываем его и добавляем в мапу соотвествия id и названия городов
-                for (URI fileURI : cacheFilesUris) {
-                    BufferedReader brReader = new BufferedReader(new FileReader(fileURI.toString()));
-                    String strLineRead = "";
-                    while ((strLineRead = brReader.readLine()) != null) {
-                        String[] cityMappings = strLineRead.split("\\s+");
-                        cityMapCache.put(cityMappings[0].trim(), cityMappings[1].trim());
-                    }
-                }
+            BufferedReader brReader = new BufferedReader(new FileReader("./city"));
+            String strLineRead = "";
+            while ((strLineRead = brReader.readLine()) != null) {
+                String[] cityMappings = strLineRead.split("\\s+");
+                cityMapCache.put(cityMappings[0].trim(), cityMappings[1].trim());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
