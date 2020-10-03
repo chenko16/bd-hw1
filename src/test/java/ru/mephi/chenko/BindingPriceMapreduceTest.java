@@ -36,7 +36,7 @@ public class BindingPriceMapreduceTest {
     @Test
     public void testMapper_ValidRecord() throws IOException {
         mapDriver.withInput(new LongWritable(), new Text(InputRecordsGenerateUtil.getValidRecord()))
-                .withOutput(new Text("222"), new IntWritable(1))
+                .withOutput(new Text("unknown"), new IntWritable(1))
                 .runTest();
     }
 
@@ -54,8 +54,8 @@ public class BindingPriceMapreduceTest {
         values.add(new IntWritable(1));
         values.add(new IntWritable(1));
 
-        reduceDriver.withInput(new Text("222"), values)
-                .withOutput(new Text("222"), new IntWritable(2))
+        reduceDriver.withInput(new Text("unknown"), values)
+                .withOutput(new Text("unknown"), new IntWritable(2))
                 .runTest();
     }
 
@@ -64,7 +64,7 @@ public class BindingPriceMapreduceTest {
         mapReduceDriver.withInput(new LongWritable(), new Text(InputRecordsGenerateUtil.getValidRecord()))
                 .withInput(new LongWritable(), new Text(InputRecordsGenerateUtil.getValidRecord()))
                 .withInput(new LongWritable(), new Text(InputRecordsGenerateUtil.getInvalidRecord()))
-                .withOutput(new Text("222"), new IntWritable(2))
+                .withOutput(new Text("unknown"), new IntWritable(2))
                 .runTest();
     }
 

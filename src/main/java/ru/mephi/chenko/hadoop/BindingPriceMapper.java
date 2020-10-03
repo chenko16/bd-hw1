@@ -29,9 +29,8 @@ public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWrit
             String[] inputData = value.toString().split("\\t");
             String city = inputData[7];
             String cachedCityName = cityMapCache.get(city);
-            if(cachedCityName != null) { // Если в кэше есть id города, то заменяем на название города
-                city = cachedCityName;
-            }
+            // Если в кэше есть id города, то заменяем на название города
+            city = cachedCityName != null ? cachedCityName : "unknown";
 
             // Фильтруем записи по значению поля bindingPrice
             if(Integer.parseInt(inputData[19]) > MIN_BID_PRICE) {
