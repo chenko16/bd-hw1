@@ -19,12 +19,16 @@ public class BindingPriceCombiner extends MapReduceBase implements Reducer<IntWr
      * @param reporter Reporter of progress and update counters, status information etc.
      */
     @Override
-    public void reduce(IntWritable key, Iterator<IntWritable> values, OutputCollector<IntWritable, IntWritable> output, Reporter reporter) throws IOException {
-        int sum = 0;
-        while (values.hasNext()) {
-            sum += values.next().get();
-        }
+    public void reduce(IntWritable key, Iterator<IntWritable> values, OutputCollector<IntWritable, IntWritable> output, Reporter reporter) {
+        try {
+            int sum = 0;
+            while (values.hasNext()) {
+                sum += values.next().get();
+            }
 
-        output.collect(key, new IntWritable(sum));
+            output.collect(key, new IntWritable(sum));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

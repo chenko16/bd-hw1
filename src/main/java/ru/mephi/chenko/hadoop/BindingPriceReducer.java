@@ -23,19 +23,23 @@ public class BindingPriceReducer extends MapReduceBase implements Reducer<IntWri
      * @param output Collector of output data
      * @param reporter Reporter of progress and update counters, status information etc.
      */
-    public void reduce(IntWritable key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
-        int sum = 0;
-        while (values.hasNext()) {
-            sum += values.next().get();
-        }
+    public void reduce(IntWritable key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output, Reporter reporter) {
+        try {
+            int sum = 0;
+            while (values.hasNext()) {
+                sum += values.next().get();
+            }
 
-        // Получаем наименование города по id из кэша
-        String city = cityMapCache.get(key.get());
-        if(city == null) {
-            city = key.toString();
-        }
+            // Получаем наименование города по id из кэша
+            String city = cityMapCache.get(key.get());
+            if(city == null) {
+                city = key.toString();
+            }
 
-        output.collect(new Text(city), new IntWritable(sum));
+            output.collect(new Text(city), new IntWritable(sum));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
