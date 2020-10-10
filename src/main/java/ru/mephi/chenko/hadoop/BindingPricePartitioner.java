@@ -1,11 +1,10 @@
 package ru.mephi.chenko.hadoop;
 
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Partitioner;
 
-public class BindingPricePartitioner implements Partitioner<Text, IntWritable> {
+public class BindingPricePartitioner implements Partitioner<IntWritable, IntWritable> {
 
     /**
      * Get the partition number for a given key
@@ -15,7 +14,7 @@ public class BindingPricePartitioner implements Partitioner<Text, IntWritable> {
      * @return Partition number
      */
     @Override
-    public int getPartition(Text key, IntWritable value, int numReduceTasks) {
+    public int getPartition(IntWritable key, IntWritable value, int numReduceTasks) {
         return(key.hashCode() & Integer.MAX_VALUE) % numReduceTasks;
     }
 

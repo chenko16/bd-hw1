@@ -3,18 +3,15 @@ package ru.mephi.chenko.hadoop;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reporter;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-
-public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
+public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWritable, Text, IntWritable, IntWritable> {
 
     private static Integer MIN_BID_PRICE = 250;
     private static IntWritable ONE = new IntWritable(1);
-    private static Map<String, String> cityMapCache = new HashMap<>();
 
     /**
      * Transform input records into a intermediate records
@@ -24,35 +21,13 @@ public class BindingPriceMapper extends MapReduceBase implements Mapper<LongWrit
      * @param reporter Reporter of progress and update counters, status information etc.
      */
     @Override
-    public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) {
+    public void map(LongWritable key, Text value, OutputCollector<IntWritable, IntWritable> output, Reporter reporter) {
         try {
             String[] inputData = value.toString().split("\\t");
-            String city = inputData[7];
-            String cachedCityName = cityMapCache.get(city);
-            // Если в кэше есть id города, то заменяем на название города
-            city = cachedCityName != null ? cachedCityName : "unknown";
 
             // Фильтруем записи по значению поля bindingPrice
             if(Integer.parseInt(inputData[19]) > MIN_BID_PRICE) {
-                output.collect(new Text(city), ONE);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Setup before mapping: init distribution cache
-     * @param conf Configuration of the job
-     */
-    @Override
-    public void configure(JobConf conf) {
-        try {
-            BufferedReader brReader = new BufferedReader(new FileReader("./city"));
-            String strLineRead = "";
-            while ((strLineRead = brReader.readLine()) != null) {
-                String[] cityMappings = strLineRead.split("\\s+");
-                cityMapCache.put(cityMappings[0].trim(), cityMappings[1].trim());
+                output.collect(new IntWritable(Integer.parseInt(inputData[7])), ONE);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

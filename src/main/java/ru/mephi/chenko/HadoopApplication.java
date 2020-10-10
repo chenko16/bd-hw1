@@ -5,6 +5,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
+import ru.mephi.chenko.hadoop.BindingPriceCombiner;
 import ru.mephi.chenko.hadoop.BindingPricePartitioner;
 import ru.mephi.chenko.hadoop.BindingPriceMapper;
 import ru.mephi.chenko.hadoop.BindingPriceReducer;
@@ -28,7 +29,7 @@ public class HadoopApplication {
 
         // Указываем классы с реализацией Mapper, Reducer и Partitioner
         conf.setMapperClass(BindingPriceMapper.class);
-        conf.setCombinerClass(BindingPriceReducer.class);
+        conf.setCombinerClass(BindingPriceCombiner.class);
         conf.setReducerClass(BindingPriceReducer.class);
         conf.setPartitionerClass(BindingPricePartitioner.class);
 
@@ -45,6 +46,8 @@ public class HadoopApplication {
         conf.setOutputFormat(SequenceFileOutputFormat.class);
 
         // Указываем формат ключа и значения результата
+        conf.setMapOutputKeyClass(IntWritable.class);
+        conf.setMapOutputValueClass(IntWritable.class);
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
 
